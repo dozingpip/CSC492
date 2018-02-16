@@ -23,10 +23,12 @@ public class PlayerController : MonoBehaviour {
 	// when the player's collider hits an obstacle, lose a life,
 	// if player hits a collectible, increase score
 	void OnTriggerEnter2D(Collider2D other){
-		if(other.gameObject.tag == "obstacle")
-			GameManager.instance.loseLife();
-		else if(other.gameObject.tag == "collectible")
-			GameManager.instance.increaseScore();
+		if (other.gameObject.tag == "obstacle")
+			GameManager.instance.loseLife ();
+		else if (other.gameObject.tag == "collectible") {
+			GameManager.instance.increaseScore ();
+			Destroy (other.gameObject);
+		}
 		else if(other.gameObject.tag == "goal")
 			GameManager.instance.nextLevel();
 	}

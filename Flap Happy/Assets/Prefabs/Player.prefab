@@ -41,6 +41,7 @@ GameObject:
   - component: {fileID: 61638302472018750}
   - component: {fileID: 50847161731319720}
   - component: {fileID: 114696064651912594}
+  - component: {fileID: 247749148712482334}
   m_Layer: 5
   m_Name: Player
   m_TagString: Player
@@ -226,3 +227,13 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+--- !u!247 &247749148712482334
+ConstantForce2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1507857021223958}
+  m_Enabled: 1
+  m_Force: {x: 1, y: 0}
+  m_RelativeForce: {x: 0, y: 0}
+  m_Torque: 0
