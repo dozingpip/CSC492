@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MonsterController : MonoBehaviour {
-	public GameObject player;
+	private GameObject player;
 	public float speed = 0.5f;
 
 	// Use this for initialization
@@ -15,6 +15,13 @@ public class MonsterController : MonoBehaviour {
 
 	// Update is called once per frame
 	void FixedUpdate () {
-		//transform.position = Vector3.Lerp(transform.position, player.transform.position);
+		float step = speed * Time.deltaTime;
+		transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
+	}
+
+	void OnTriggerEnter(Collider other){
+		if(other.gameObject.CompareTag("Player")){
+			GameManager.instance.gameOver();
+		}
 	}
 }

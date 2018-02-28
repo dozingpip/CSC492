@@ -95,13 +95,13 @@ public class GameManager : MonoBehaviour
     if (scene < scenes && scene >= 0) {
       SceneManager.LoadScene(scene);
     }else{
-      Debug.Log("Scene " + scene + " does not exist.");
+      Debug.Log("Scene " + scene + " does not exist. total scenes: "+ scenes);
       gameOver();
 		}
   }
 
   // load the game over scene
-  private void gameOver(){
-    loadLevel(4);
+  public void gameOver(){
+    //loadLevel(4);
   }
 }

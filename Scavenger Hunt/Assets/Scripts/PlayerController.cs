@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
-	private float startTime;
+	private float startTime = 0;
 	private Vector3 destination;
 	private Vector3 fromWhere;
-	private float journeyLength;
+	private float journeyLength = 0;
 	public float speed = 1.0f;
 
 	// Update is called once per frame
@@ -14,18 +14,20 @@ public class PlayerController : MonoBehaviour {
 		if(Input.GetMouseButtonUp(0)){
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
-			if(Physics.Raycast(ray, out hit, 20)){
+			int layerMask = 1 << 8;
+			if(Physics.Raycast(ray, out hit, 20, layerMask)){
 				//Vector3 direction = new Vector3(hit.point.x -
 				//		transform.position.x, 0, hit.point.z - transform.position.z);
-				destination = hit.point;
+				destination = new Vector3( hit.point.x, transform.position.y, hit.point.x);
 				fromWhere = transform.position;
 				startTime = Time.time;
 				journeyLength = Vector3.Distance(fromWhere, destination);
 			}
 		}
-		float distCovered = (Time.time - startTime) * speed;
-    float fracJourney = distCovered / journeyLength;
-    transform.position = Vector3.Lerp(fromWhere, destination, fracJourney);
-
+		if(journeyLength > 0){
+			float distCovered = (Time.time - startTime) * speed;
+	    float fracJourney = distCovered / journeyLength;
+	    transform.position = Vector3.Lerp(fromWhere, destination, fracJourney);
+		}
 	}
 }
