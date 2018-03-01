@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -19,13 +20,11 @@ public class GameManager : MonoBehaviour
   // represents the index of the current scene
 	private int sceneIndex;
 	//number of total scenes
-	private int scenes;
+	public int scenes;
 
-  private GameObject[] collectibles;
+  private Transform collectibles;
 
-  private GameObject nextPickup;
-
-  private int nextCollectibleIndex = 0;
+  private int nextCollectibleIndex;
 
   //Awake is always called before any Start functions
   void Awake()
@@ -60,48 +59,58 @@ public class GameManager : MonoBehaviour
   // Called when a new scene is loaded
   void stageInit(Scene scene, LoadSceneMode mode)
   {
-    collectibles = GameObject.FindGameObjectsWithTag("collectible");
+    sceneIndex = SceneManager.GetActiveScene().buildIndex;
+    GameObject[] collectibles_ = GameObject.FindGameObjectsWithTag("collectible");
 
-    if(collectibles.Length > 0){
-      nextPickup = collectibles[nextCollectibleIndex];
+    if(collectibles_.Length > 0){
+      collectibles = collectibles_[0].transform;
+      nextCollectibleIndex = 0;
     }
   }
 
-  public bool isNextCollectible(GameObject compareTo){
-    if(compareTo == nextPickup){
-      Debug.Log("true");
+  // check the given index against the next collectible index
+  public bool isNextCollectible(int compareTo){
+    if(compareTo == nextCollectibleIndex){
       return true;
-    }else return false;
+    }else{
+      return false;
+    }
   }
 
+  // keep track of whether the next collectible is valid and tell it to do whatever
+  // it does when it thinks it's next
   public void collectNext(){
-    if(nextCollectibleIndex < collectibles.Length - 1){
+    if(nextCollectibleIndex < collectibles.childCount-1){
       nextCollectibleIndex++;
-      nextPickup = collectibles[nextCollectibleIndex];
+      collectibles.GetChild(nextCollectibleIndex).gameObject.GetComponent<Collectible>().meNext();
     }else{
       nextLevel();
     }
   }
 
   // Attempt to move onto the next level.
-  void nextLevel()
+  private void nextLevel()
   {
     sceneIndex++;
 		loadLevel(sceneIndex);
   }
 
   // load a specified scene/ level
-  public void loadLevel(int scene){
+  private void loadLevel(int scene){
     if (scene < scenes && scene >= 0) {
       SceneManager.LoadScene(scene);
-    }else{
-      Debug.Log("Scene " + scene + " does not exist. total scenes: "+ scenes);
-      gameOver();
-		}
+    }else Debug.Log("oops, scene " +scene+ " doesnt exist. Actually we have only "+scenes+ " scenes.");
+  }
+
+  //load level by scene name instead of index.
+  public void loadLevel(String name){
+    if(SceneManager.GetSceneByName(name) != null){
+      SceneManager.LoadScene(name);
+    }
   }
 
   // load the game over scene
   public void gameOver(){
-    //loadLevel(4);
+    loadLevel("Game_Over");
   }
 }

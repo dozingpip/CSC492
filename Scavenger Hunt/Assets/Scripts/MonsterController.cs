@@ -13,12 +13,15 @@ public class MonsterController : MonoBehaviour {
 			player = playerSearch[0];
 	}
 
-	// Update is called once per frame
+	// the monster moves a little bit toward the player, wherever they are this frame.
+	// the distance to move is modified by the time since last frame so it looks like
+	// smooth movement.
 	void FixedUpdate () {
 		float step = speed * Time.deltaTime;
 		transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
 	}
 
+	// if the monster hits the player, it's game over for everyone
 	void OnTriggerEnter(Collider other){
 		if(other.gameObject.CompareTag("Player")){
 			GameManager.instance.gameOver();
