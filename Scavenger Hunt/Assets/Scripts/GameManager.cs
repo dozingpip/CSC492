@@ -99,7 +99,9 @@ public class GameManager : MonoBehaviour
   private void loadLevel(int scene){
     if (scene < scenes && scene >= 0) {
       SceneManager.LoadScene(scene);
-    }else Debug.Log("oops, scene " +scene+ " doesnt exist. Actually we have only "+scenes+ " scenes.");
+    }else {
+      gameOver();
+    }
   }
 
   //load level by scene name instead of index.
@@ -111,6 +113,6 @@ public class GameManager : MonoBehaviour
 
   // load the game over scene
   public void gameOver(){
-    loadLevel("Game_Over");
+    loadLevel("Main_Menu");
   }
 }
