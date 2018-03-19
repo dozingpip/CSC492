@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.AI;
 
 using System.Collections.Generic;       //Allows us to use Lists.
 
@@ -92,5 +93,30 @@ public class GameManager : MonoBehaviour
         parent.GetComponent<toggleMaterial>().toggleMat();
       }
     }
+  }
+
+  public void attract(GameObject object1, GameObject object2, float distanceThreshold){
+    NavMeshAgent agent = object1.GetComponent<NavMeshAgent>();
+    Vector3 dest = agent.destination;
+    Transform target = object2.transform;
+    if(Vector3.Distance(dest, target.position) > distanceThreshold){
+      Vector3 destination = target.position;
+      agent.Warp(destination);
+    }
+  }
+
+  public void combine(GameObject object1, GameObject object2){
+    MeshFilter[] meshFilters = object2.GetComponentsInChildren<MeshFilter>();
+    CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+    int i = 0;
+    while(i < meshFilters.Length){
+      combine[i].mesh = meshFilters[i].sharedMesh;
+      combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+      meshFilters[i].gameObject.SetActive(false);
+      i++;
+    }
+    object1.transform.GetComponent<MeshFilter>().mesh = new Mesh();
+    object1.transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+    object1.SetActive(true);
   }
 }

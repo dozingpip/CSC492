@@ -15,7 +15,8 @@ public class Pickable : MonoBehaviour {
 
 	}
 
-	public void pickup(){
-		
+	public void pickup(GameObject uiToAddTo){
+		GameObject image = transform.Find("RawImage").gameObject;
+		inventory.addItem(image);
 	}
 }

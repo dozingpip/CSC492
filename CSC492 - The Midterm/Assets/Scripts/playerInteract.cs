@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class playerInteract : MonoBehaviour {
-	GameObject[] chosenObjects;
+	Queue<GameObject> attractSelection;
+	public float distanceThreshold =1f;
+	Pickable pick = null;
+	Choosable chosen = null;
+	public GameObject playerUI;
 
 	// Use this for initialization
 	void Start () {
-		chosenObjects = new GameObject[2];
+		attractSelection = new Queue<GameObject>();
 	}
 
 	// Update is called once per frame
@@ -15,27 +19,28 @@ public class playerInteract : MonoBehaviour {
 		if(Input.GetMouseButtonUp(0)){
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
-			if(Physics.Raycast(ray, out hit, 20)){
-				Pickable pick = hit.transform.gameObject.GetComponent<Pickable>();
-				if(pick!= null){
-					pick.pickup();
-				}else if(chosenObjects[1]==null){
-					if(chosenObjects[0]==null){
-						chosenObjects[0] = hit.transform.gameObject;
-					}else{
-						chosenObjects[1] = hit.transform.gameObject;
-					}
+			if(Physics.Raycast(ray, out hit, 2000)){
+				Debug.Log("hit something");
+				pick = hit.transform.gameObject.GetComponent<Pickable>();
+
+				if(pick){
+					pick.pickup(playerUI);
 				}else{
-					Vector3 point = Vector3.zero;
-					attract(chosenObjects, point);
+					chosen = hit.transform.gameObject.GetComponent<Choosable>();
 				}
+				if(chosen){
+					Debug.Log("chosen: "+ hit.transform.gameObject.name);
+					if(attractSelection.Count<2){
+						attractSelection.Enqueue(hit.transform.gameObject);
+					}else{
+						attractSelection.Dequeue();
+						attractSelection.Enqueue(hit.transform.gameObject);
+					}
+				}
+				//set destination of navmeshagent to the other object, when they collide, decide which object has precedence, delete the other object's collider and either use combineMesh or parent one to combine.
 			}
 		}
-	}
-
-	void attract(GameObject[] objects, Vector3 toWhere){
-		for(int i = 0; i< objects.Length; i++){
-			// objects[i] move toward toWhere
-		}
+		if(attractSelection.Count==2)
+			GameManager.instance.attract(attractSelection.Dequeue(), attractSelection.Dequeue(), distanceThreshold);
 	}
 }
