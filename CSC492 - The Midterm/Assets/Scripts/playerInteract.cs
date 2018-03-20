@@ -6,7 +6,7 @@ public class playerInteract : MonoBehaviour {
 	Queue<GameObject> attractSelection;
 	public float distanceThreshold =1f;
 	Pickable pick = null;
-	Choosable chosen = null;
+	Selectable selected = null;
 	public GameObject playerUI;
 
 	// Use this for initialization
@@ -26,21 +26,27 @@ public class playerInteract : MonoBehaviour {
 				if(pick){
 					pick.pickup(playerUI);
 				}else{
-					chosen = hit.transform.gameObject.GetComponent<Choosable>();
+					selected = hit.transform.gameObject.GetComponent<Selectable>();
 				}
-				if(chosen){
-					Debug.Log("chosen: "+ hit.transform.gameObject.name);
+				if(selected && !attractSelection.Contains(selected.gameObject)){
+					selected.Selected();
 					if(attractSelection.Count<2){
-						attractSelection.Enqueue(hit.transform.gameObject);
+						attractSelection.Enqueue(selected.gameObject);
+						Debug.Log("chosen: " + selected.gameObject.name+", a: "+ attractSelection.Count);
 					}else{
-						attractSelection.Dequeue();
-						attractSelection.Enqueue(hit.transform.gameObject);
+						attractSelection.Dequeue().GetComponent<Selectable>().Deselected();
+						attractSelection.Enqueue(selected.gameObject);
 					}
 				}
 				//set destination of navmeshagent to the other object, when they collide, decide which object has precedence, delete the other object's collider and either use combineMesh or parent one to combine.
 			}
 		}
-		if(attractSelection.Count==2)
-			GameManager.instance.attract(attractSelection.Dequeue(), attractSelection.Dequeue(), distanceThreshold);
+		if(attractSelection.Count==2){
+			GameObject obj1 = attractSelection.Dequeue();
+			GameObject obj2 = attractSelection.Dequeue();
+			GameManager.instance.attract(obj1, obj2, distanceThreshold);
+			obj1.GetComponent<Selectable>().Deselected();
+			obj2.GetComponent<Selectable>().Deselected();
+		}
 	}
 }

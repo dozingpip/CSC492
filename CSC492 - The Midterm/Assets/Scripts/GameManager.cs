@@ -101,7 +101,8 @@ public class GameManager : MonoBehaviour
     Transform target = object2.transform;
     if(Vector3.Distance(dest, target.position) > distanceThreshold){
       Vector3 destination = target.position;
-      agent.Warp(destination);
+      Debug.Log("warping");
+      agent.destination = destination;
     }
   }
 
