@@ -8,6 +8,7 @@ public class playerInteract : MonoBehaviour {
 	Pickable pick = null;
 	Selectable selected = null;
 	public GameObject playerUI;
+	public LineRenderer mouseMarker;
 
 	// Use this for initialization
 	void Start () {
@@ -16,9 +17,9 @@ public class playerInteract : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		RaycastHit hit;
 		if(Input.GetMouseButtonUp(0)){
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			RaycastHit hit;
 			if(Physics.Raycast(ray, out hit, 2000)){
 				Debug.Log("hit something");
 				pick = hit.transform.gameObject.GetComponent<Pickable>();
@@ -40,6 +41,15 @@ public class playerInteract : MonoBehaviour {
 				}
 				//set destination of navmeshagent to the other object, when they collide, decide which object has precedence, delete the other object's collider and either use combineMesh or parent one to combine.
 			}
+		}else{
+				if(Physics.Raycast(ray, out hit, 200)){
+					if(!hit.transform.gameObject.CompareTag("Player")){
+						Debug.Log(hit.transform.gameObject.name);
+						mouseMarker.SetPosition(0, ray.origin + new Vector3(0.5f, 0, 0.5f));
+						mouseMarker.SetPosition(1, hit.point);
+						mouseMarker.gameObject.transform.position = ray.origin;
+					}
+				}
 		}
 		if(attractSelection.Count==2){
 			GameObject obj1 = attractSelection.Dequeue();
