@@ -101,13 +101,18 @@ public class GameManager : MonoBehaviour
     Transform target = object2.transform;
     if(Vector3.Distance(dest, target.position) > distanceThreshold){
       Vector3 destination = target.position;
-      Debug.Log("warping");
       agent.destination = destination;
     }
   }
 
   public void combine(GameObject object1, GameObject object2){
+    Debug.Log("combining!");
     MeshFilter[] meshFilters = object2.GetComponentsInChildren<MeshFilter>();
+    if(object2.transform.childCount>0){
+      foreach(GameObject thing in object2.transform){
+        thing.transform.parent = object2.transform;
+      }
+    }
     CombineInstance[] combine = new CombineInstance[meshFilters.Length];
     int i = 0;
     while(i < meshFilters.Length){

@@ -11,6 +11,7 @@ string markName;
 		GameObject mark = Instantiate(marker, transform.position + markerOffset, Quaternion.identity);
 		mark.transform.parent = transform;
 		markName = mark.name;
+		//GetComponent<BoxCollider>()
 	}
 
 	public void Deselected(){
@@ -19,7 +20,12 @@ string markName;
 	}
 
 	public void OnTriggerEnter(Collider other){
-		//if(other) send gamemanager some kind signal saying the attract is done.
+		Debug.Log("Hey! you!");
+		// if(other) send gamemanager some kind signal saying the attract is done.
+		Selectable otherSelect = other.gameObject.GetComponent<Selectable>();
+		if(otherSelect){
+			GameManager.instance.combine(otherSelect.gameObject, gameObject);
+		}
 	}
 
 	public bool isSelected(){
