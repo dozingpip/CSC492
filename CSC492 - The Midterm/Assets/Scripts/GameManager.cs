@@ -11,22 +11,18 @@ public class GameManager : MonoBehaviour
 {
   //Static instance of GameManager which allows it to be accessed by any other script.
   public static GameManager instance = null;
-
-  // the text label that shows the player how they're doing as far as collecting
-  private Text state_label;
-
-  private GameObject player;
-  private GameObject spawn;
   // the input field for changing the name of the currently selected object
-  public GameObject assetNameField;
+  private GameObject assetNameField;
   // what is the object currently selected for renaming
   private GameObject assetToRename;
   // the clipboard that displays user feedback
-  public GameObject clipboard;
+  private GameObject clipboard;
   // the text object for the user's final letter grade in this challenge
-  public Text letterGrade;
+  private Text letterGrade;
   // displays amount of time left to complete all the items on the clipboard
-  public Text timeLeft;
+  private Text timeLeft;
+
+  private GameObject playerInteractionLine;
 
 
   // represents the index of the current scene
@@ -45,7 +41,7 @@ public class GameManager : MonoBehaviour
   // number of clipboard items completed
   private int itemsCompleted;
   // is the game still going?
-  private bool gameOn;
+  private bool gameOn = false;
 
   //Awake is always called before any Start functions
   void Awake()
@@ -81,9 +77,33 @@ public class GameManager : MonoBehaviour
   void stageInit(Scene scene, LoadSceneMode mode)
   {
     sceneIndex = SceneManager.GetActiveScene().buildIndex;
-    timer = 0;
-    itemsCompleted = 1;
-    gameOn = true;
+
+
+    GameObject[] cbTemp = GameObject.FindGameObjectsWithTag("clipboard");
+    if(cbTemp.Length>0){
+      clipboard = cbTemp[0];
+      letterGrade = clipboard.transform.Find("letter").gameObject.GetComponent<Text>();
+
+      timer = 0;
+      itemsCompleted = 1;
+      gameOn = true;
+    }
+
+    GameObject[] tempTime = GameObject.FindGameObjectsWithTag("timeDisplay");
+    if(tempTime.Length>0){
+      timeLeft = tempTime[0].GetComponent<Text>();
+    }
+
+    GameObject[] playerInteractTemp = GameObject.FindGameObjectsWithTag("interactLine");
+    if(playerInteractTemp.Length>0){
+      playerInteractionLine = playerInteractTemp[0];
+    }
+
+    GameObject[] assetRenameFieldTemp = GameObject.FindGameObjectsWithTag("assetRenameField");
+    if(assetRenameFieldTemp.Length>0){
+      assetNameField = assetRenameFieldTemp[0];
+      assetNameField.SetActive(false);
+    }
   }
 
   // Attempt to move onto the next level.
@@ -144,10 +164,12 @@ public class GameManager : MonoBehaviour
       foreach(GameObject parent in parentObjects){
         parent.GetComponent<toggleMaterial>().toggleMat();
       }
+
     }
 
+    playerInteractionLine.SetActive(true);
     // in doing this, the user completed the "use materials" goal
-    checkCheckmark("materials");
+    finshedClipboardItem("materials");
   }
 
   // make one object move towards the other through use of a NavMesh
@@ -155,10 +177,8 @@ public class GameManager : MonoBehaviour
     NavMeshAgent agent = object1.GetComponent<NavMeshAgent>();
     Vector3 dest = agent.destination;
     Transform target = object2.transform;
-    if(Vector3.Distance(dest, target.position) > distanceThreshold){
-      Vector3 destination = target.position;
-      agent.destination = destination;
-    }
+    Vector3 destination = target.position;
+    agent.destination = destination;
   }
 
   // combine the meshes of two objects.
@@ -166,50 +186,60 @@ public class GameManager : MonoBehaviour
     object1.GetComponent<Selectable>().Deselected();
     object2.GetComponent<Selectable>().Deselected();
     Debug.Log("combining!");
-    GameObject combinedObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-    Destroy(combinedObj.GetComponent<BoxCollider>());
+    Transform parent = object2.transform.parent;
+    object2.transform.SetParent(null);
+    object1.transform.SetParent(null);
+    int maxCombineCount = Mathf.Max(object2.GetComponent<Selectable>().getCombineCount(), object1.GetComponent<Selectable>().getCombineCount());
+    Debug.Log(parent);
+    GameObject combinedObj = new GameObject();
 
     MeshFilter meshFilter1 = object1.GetComponent<MeshFilter>();
     MeshFilter meshFilter2 = object2.GetComponent<MeshFilter>();
 
+    CombineInstance[] combine = new CombineInstance[2];
+    Material[] materials = new Material[2];
+    combine[0].mesh = meshFilter1.mesh;
+    combine[0].transform = meshFilter2.transform.localToWorldMatrix.inverse*meshFilter1.transform.localToWorldMatrix;
+    materials[0] = meshFilter1.GetComponent<MeshRenderer>().material;
+    object1.SetActive(false);
+    combine[1].mesh = meshFilter2.mesh;
+    combine[1].transform = Matrix4x4.identity;
+    materials[1] = meshFilter2.GetComponent<MeshRenderer>().material;
+    object2.SetActive(false);
+
+    combinedObj.AddComponent<MeshFilter>();
+    combinedObj.AddComponent<MeshRenderer>();
+    combinedObj.GetComponent<MeshRenderer>().materials = materials;
+    combinedObj.transform.GetComponent<MeshFilter>().mesh = new Mesh();
+    combinedObj.transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+
+    combinedObj.transform.position = meshFilter2.transform.position;
+    combinedObj.transform.rotation = meshFilter2.transform.rotation;
+    combinedObj.transform.localScale = meshFilter2.transform.localScale;
+    combinedObj.transform.SetParent(parent);
+
     if(object1.transform.childCount>0){
       foreach(Transform thing in object1.transform){
-        thing.parent.SetParent(combinedObj.transform);
+        thing.SetParent(combinedObj.transform);
       }
     }
 
     if(object2.transform.childCount>0){
       foreach(Transform thing in object2.transform){
-        thing.parent.SetParent(combinedObj.transform);
+        thing.SetParent(combinedObj.transform);
       }
     }
-
-    CombineInstance[] combine = new CombineInstance[2];
-    combine[0].mesh = meshFilter1.mesh;
-    combine[0].transform = Matrix4x4.identity;
-    object1.SetActive(false);
-    combine[1].mesh = meshFilter2.mesh;
-    combine[1].transform = meshFilter1.transform.localToWorldMatrix.inverse*meshFilter2.transform.localToWorldMatrix;
-    object2.SetActive(false);
-
-    combinedObj.transform.GetComponent<MeshFilter>().mesh = new Mesh();
-    combinedObj.transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
-    combinedObj.transform.SetParent(object2.transform.parent);
-    combinedObj.transform.position = meshFilter2.transform.position;
-    combinedObj.transform.rotation = meshFilter2.transform.rotation;
-    combinedObj.transform.localScale = meshFilter2.transform.localScale;
-
     combinedObj.AddComponent<BoxCollider>();
     combinedObj.AddComponent<Selectable>();
-    combinedObj.name = object1.name + " and " + object2.name + " combined";
+    combinedObj.GetComponent<Selectable>().setCombineCount(maxCombineCount);
+    NavMeshAgent navmeshagent = combinedObj.AddComponent<NavMeshAgent>();
+    navmeshagent.radius = Mathf.Max(object1.GetComponent<NavMeshAgent>().radius, object1.GetComponent<NavMeshAgent>().radius);
+    navmeshagent.baseOffset = Mathf.Max(object1.GetComponent<NavMeshAgent>().baseOffset, object1.GetComponent<NavMeshAgent>().baseOffset);
+    Debug.Log(navmeshagent.baseOffset);
+    combinedObj.name = object1.name + " + " + object2.name;
     combinedObj.SetActive(true);
     // completed the npc motion clipboard item!
-    GameManager.instance.checkCheckmark("npcMotion");
-  }
-
-  // Use this for initialization
-  void Start () {
-    assetNameField.SetActive(false);
+    GameManager.instance.finshedClipboardItem("npcMotion");
   }
 
   // Update is called once per frame
@@ -221,10 +251,12 @@ public class GameManager : MonoBehaviour
       if(Input.GetButtonUp("Jump")){
         toggleClipboard(false);
       }else if(Input.GetButtonUp("Submit")){
-        GameObject inputText = assetNameField.transform.Find("InputField").Find("Text").gameObject;
-        assetToRename.name = inputText.GetComponent<Text>().text;
-        assetNameField.SetActive(false);
-        checkCheckmark("nameAssets");
+        Text inputText = assetNameField.transform.Find("InputField").Find("Text").gameObject.GetComponent<Text>();
+        if(inputText.text != "" && inputText.text != " "){
+          assetToRename.name = inputText.text;
+          assetNameField.SetActive(false);
+          finshedClipboardItem("nameAssets");
+        }
       }else if(Input.GetButtonUp("Cancel")){
         assetToRename = null;
         assetNameField.SetActive(false);
@@ -234,7 +266,7 @@ public class GameManager : MonoBehaviour
       }
       if(timer<alottedTime){
         timer+=Time.deltaTime;
-        timeLeft.text = (alottedTime -timer).ToString();
+        timeLeft.text = (alottedTime - timer).ToString();
       }else{
         gameOver();
       }
@@ -247,7 +279,7 @@ public class GameManager : MonoBehaviour
   }
 
   // update the checkmark next to a relevant completed goal/ item
-  public void checkCheckmark(string nameOfToggleObject){
+  public void finshedClipboardItem(string nameOfToggleObject){
     Toggle toggle = clipboard.transform.Find(nameOfToggleObject).gameObject.GetComponent<Toggle>();
     if(!toggle.isOn){
       toggle.isOn = true;
@@ -255,15 +287,22 @@ public class GameManager : MonoBehaviour
     }
   }
 
+  public bool isClipboardItemDone(string nameOfToggleObject){
+    return clipboard.transform.Find(nameOfToggleObject).gameObject.GetComponent<Toggle>().isOn;
+  }
+
   // start the process of renaming an asset
   public void renameAsset(GameObject asset){
     assetNameField.SetActive(true);
-    GameObject inputField = assetNameField.transform.Find("InputField").gameObject;
-    GameObject placeholder = inputField.transform.Find("Placeholder").gameObject;
+    GameObject inputFieldObject = assetNameField.transform.Find("InputField").gameObject;
+    GameObject placeholder = inputFieldObject.transform.Find("Placeholder").gameObject;
     Text text = placeholder.GetComponent<Text>();
     text.text = asset.name;
     assetToRename = asset;
-    inputField.GetComponent<InputField>().ActivateInputField();
+    InputField inputField = inputFieldObject.GetComponent<InputField>();
+    inputField.Select();
+    inputField.text = "";
+    inputField.ActivateInputField();
   }
 
   //check if the game is still going.

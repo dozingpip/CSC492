@@ -75,10 +75,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4995682519874774}
-  - component: {fileID: 114503016585352260}
   m_Layer: 0
   m_Name: desktop setup
-  m_TagString: textured
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -138,8 +137,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1665073496285128}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.07015746, z: 2.9400003}
-  m_LocalScale: {x: 0.003786191, y: 0.0037861906, z: 0.0037861906}
+  m_LocalPosition: {x: 0.0023271989, y: -0.07015746, z: 0.7357619}
+  m_LocalScale: {x: 0.0037843003, y: 0.0037861906, z: 0.0037861906}
   m_Children:
   - {fileID: 4932702056086196}
   - {fileID: 4116855459933092}
@@ -345,22 +344,6 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
---- !u!114 &114503016585352260
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1665073496285128}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aff5eb0d029e93b4585cba9449d44b9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  texture: {fileID: 0}
-  defaultMat: {fileID: 0}
-  defaultTexture: {fileID: 0}
-  toggled: 0
 --- !u!114 &114785730993881616
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -372,7 +355,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e8662912d2b59a4aa42dbc7a4005a5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  marker: {fileID: 1444745692914794, guid: f0f513103d407b641996a3d13368f4bd, type: 2}
+  obstacleAvoidanceRadius: 0.05
 --- !u!114 &114916914074683696
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -384,7 +367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e8662912d2b59a4aa42dbc7a4005a5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  marker: {fileID: 1444745692914794, guid: f0f513103d407b641996a3d13368f4bd, type: 2}
+  obstacleAvoidanceRadius: 0.05
 --- !u!195 &195052291494186256
 NavMeshAgent:
   m_ObjectHideFlags: 1
@@ -414,7 +397,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 1110521335249824}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.14700004
+  m_Radius: 0.05
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -424,7 +407,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 0.03957255
-  m_BaseOffset: 0.019786276
+  m_BaseOffset: -0.004
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!222 &222633237272207452

@@ -38,7 +38,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eab8e911be63c154f892a5e437bd9af0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  assetNameField: {fileID: 0}
+  clipboard: {fileID: 0}
+  letterGrade: {fileID: 0}
+  timeLeft: {fileID: 0}
+  playerInteractionLine: {fileID: 0}
   scenes: 0
+  numTotalCheckmarks: 5
+  alottedTime: 1000
 --- !u!224 &224048072527843274
 RectTransform:
   m_ObjectHideFlags: 1
