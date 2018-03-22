@@ -4,10 +4,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class toggleMaterial : MonoBehaviour {
+	// the material that will be applied to this object.
 	public Material mat;
+	// (used raw images in canvases) the texture to be applied to an object
 	public Texture texture;
+	// default material shown before the correct material is applied
 	public Material defaultMat = null;
+	// (used raw images in canvases) default texture shown before the correct material is applied
 	public Texture defaultTexture = null;
+	// is the material/ texture applied or not?
 	public bool toggled;
 
 	void Start(){
@@ -30,6 +35,7 @@ public class toggleMaterial : MonoBehaviour {
 		}
 	}
 
+	// toggle the material/ texture of this object (and or all its children)
 	public void toggleMat(){
 		if(transform.childCount>0){
 			foreach(Transform child in transform){

@@ -21,10 +21,10 @@ GameObject:
   - component: {fileID: 4116855459933092}
   - component: {fileID: 33337407127322000}
   - component: {fileID: 23602870800427746}
-  - component: {fileID: 65629001926925732}
   - component: {fileID: 65584145191458928}
   - component: {fileID: 114916914074683696}
   - component: {fileID: 195859000227113868}
+  - component: {fileID: 54342099566129214}
   m_Layer: 0
   m_Name: keyboard
   m_TagString: Untagged
@@ -138,8 +138,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1665073496285128}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.07015746, z: 2.243}
-  m_LocalScale: {x: 0.0037843, y: 0.0037842975, z: 0.0037842975}
+  m_LocalPosition: {x: 0, y: -0.07015746, z: 2.9400003}
+  m_LocalScale: {x: 0.003786191, y: 0.0037861906, z: 0.0037861906}
   m_Children:
   - {fileID: 4932702056086196}
   - {fileID: 4116855459933092}
@@ -228,6 +228,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1920714577683128}
   m_Mesh: {fileID: 4300000, guid: fd1318b3a662ba14d92dfc4bef7e6a43, type: 3}
+--- !u!54 &54342099566129214
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1110521335249824}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!54 &54732566990555716
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -263,18 +278,6 @@ BoxCollider:
   m_GameObject: {fileID: 1110521335249824}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.3590001, y: 0.019786302, z: 0.10415906}
-  m_Center: {x: -0.032500006, y: 0.009893125, z: -0.050920412}
---- !u!65 &65629001926925732
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1110521335249824}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.3590001, y: 0.019786302, z: 0.10415906}
