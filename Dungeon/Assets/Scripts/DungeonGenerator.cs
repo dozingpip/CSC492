@@ -10,7 +10,7 @@ public class DungeonGenerator : MonoBehaviour {
     public GameObject _dungeon;
 
     //Max room count
-    public int _max_room_count=25;
+    public int _max_room_count=0;
     public int _room_count = 1;
 
     private List<Vector3> _existing_rooms;
@@ -19,7 +19,10 @@ public class DungeonGenerator : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+        while(_max_room_count ==0){
+            Debug.Log("waiting for difficulty setting to come in");
+        }
+        Debug.Log("making "+ _max_room_count + " rooms now.");
 
         _existing_rooms = new List<Vector3>();
 
@@ -31,6 +34,7 @@ public class DungeonGenerator : MonoBehaviour {
         int maxCounter = 1000;
         while (_room_count < _max_room_count && maxCounter>0)
         {
+            Debug.Log("room count"+_room_count);
             spawnByTag("Room");
             maxCounter -= 1;
         }
@@ -124,6 +128,9 @@ public class DungeonGenerator : MonoBehaviour {
         }
         return false;
     }
-	
+
+    public void setMaxRoomCount(int newMax){
+        _max_room_count = newMax;
+    }
 
 }
